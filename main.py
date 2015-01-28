@@ -1,51 +1,4 @@
-#  ======================================================================================
-#Extra Challenge
-#
-#If you found completing the basic requirements fairly straightforward then you should try to extend your code to model the bicycles in more detail.
-#
-#Alter your classes
-#You should add new classes to represent the following bike parts:
-#
-#Wheels
-#Have a model name
-#Have a weight
-#Have a cost to produce
-#There should be a total of three different wheel types
-#Frames
-#Can be made of aluminum, carbon, or steel
-#Have a weight
-#Have a cost to produce
-#Then you should modify your Bicycle class. The updated class should:
-#
-#Bicycle
-#Be comprised of two wheels of the same type and a frame
-#Have a weight equal to the sum of the weight of the frame and two wheels
-#Have a cost to produce equal to the sum of the two wheels' and frame's cost to produce
-#You may also need to update your testing script to reflect the changes that you have made here.
-#
-#Extension Exercise
-#
-#If the extra challenges were not a problem and you're running ahead of schedule then you could try to extend your model even further to add bicycle manufacturers.
-#
-#Alter your classes
-#You should add one or more classes to represent:
-#
-#Bicycle Manufacturers
-#Have a name
-#Produce three models of bikes each
-#Have a percentage over cost which they sell bikes to bike shops at
-#Then you should modify your Bicycle class again. The updated class should:
-#
-#Bicycle
-#Have a manufacturer
-#Update your testing script
-#The testing script should be modified so that it:
-#
-#Creates two bicycle manufacturers, which both produce three different bicycle models
-#Makes the bike shops stock their inventory by purchasing bikes from manufacturers
-#
-# ====================================================================
-from bicycles import Bicycle, BikeShop, Customer, Frame, Wheel
+from bicycles import Bicycle, BikeShop, Customer, Frame, Wheel, Manufacturer
 from random import randint
 
 def list_inventory(shop):
@@ -54,30 +7,36 @@ def list_inventory(shop):
     
 if __name__ == '__main__':
   # Set up the bike shop.  Stock 6 models, and surcharge 20%.
-  my_shopname = "LoPresti's Bike Shop"
-  print 'Welcome to {}...\n'.format(my_shopname)
-  shop = BikeShop(my_shopname,0.20)
+  shop = BikeShop("LoPresti's Bike Shop",0.20)
+  print 'Welcome to {}...\n'.format(shop.shop_name)
+  
+  # Define bike manufacturers.  Each to make three models of bike.
+  # Each to apply a surcharge that is passed to the bike shop.
+  jbc = Manufacturer("Johnstown Bike Company",0.10)
+  rbw = Manufacturer("Richland Bike Works", 0.15)
   
   # Define wheel types.
-  jabba = Wheel("Jabba",80,37)
-  brock = Wheel("Brock",55,47)
-  grady = Wheel("Grady",40,57)
+  jabba = Wheel("Jabba",80,37) # obligatory Star Wars reference
+  brock = Wheel("Brock",55,47) # tough-as-nails hockey player for Johnstown Chiefs
+  grady = Wheel("Grady",40,57) # high-school friend
   
   # Define frame models.
-  flyer = Frame("Flyer","carbon",15,50)
-  mondo = Frame("Mondo","steel",30,90)
-  reynolds = Frame("Reynolds","aluminum",20,75)
+  flyer = Frame("Flyer","carbon",15,250)
+  mondo = Frame("Mondo","steel",30,390)
+  reynolds = Frame("Reynolds","aluminum",20,175) # common brand of Al foil
   
   # Define bicycle models.
-  kopriva = Bicycle("Kopriva",flyer,brock)
-  ems = Bicycle("Ems",flyer,grady)
-  hambright = Bicycle("Hambright",mondo,jabba)
-  renzi = Bicycle("Renzi",reynolds,jabba)
-  chief = Bicycle("Chief",reynolds,brock)
-  ram = Bicycle("Ram",mondo,grady)
- 
-  # Stock the bicycle shop.
-  # TO DO: Find a random integer generator and use those values instead.
+  # Sub shops:  Kopriva (sadly, long gone) and Em's (still open in Johnstown, PA)
+  # Gym teachers:  Hambright (boys) and Renzi (girls) -- high school
+  # Mascots:  Chief (ECHL Johnstown Chiefs) and Ram (Richland HS)
+  kopriva = Bicycle("Kopriva",flyer,brock,jbc)
+  ems = Bicycle("Ems",flyer,grady,jbc)
+  hambright = Bicycle("Hambright",mondo,jabba,rbw)
+  renzi = Bicycle("Renzi",reynolds,jabba,rbw)
+  chief = Bicycle("Chief",reynolds,brock,jbc)
+  ram = Bicycle("Ram",mondo,grady,rbw)
+  
+  # Stock the bicycle shop. (0-3 facilitates testing of short-stock situations.)
   shop.stock_bike(kopriva, randint(0,3))
   shop.stock_bike(ems, randint(0,3))
   shop.stock_bike(hambright, randint(0,3))
@@ -85,7 +44,7 @@ if __name__ == '__main__':
   shop.stock_bike(chief, randint(0,3))
   shop.stock_bike(ram, randint(0,3))
   
-  # Define customers.
+  # Define customers. Three friends from high school.
   david = Customer("David",200)
   doug = Customer("Doug",500)
   bryan = Customer("Bryan",1000)
@@ -131,7 +90,7 @@ if __name__ == '__main__':
   # After each customer has purchased their bike, the script should print out the
   # bicycle shop's remaining inventory for each bike, and how much profit they have
   # made selling the three bikes.
-  print 'After a busy day of sales at {}...\n'.format(my_shopname)
+  print 'After a busy day of sales at {}...\n'.format(shop.shop_name)
   print "Our end-of-day inventory (Bicycle: Number Available ($Price)):\n"
   list_inventory(shop)
   print "\nWe made a profit of ${:,.2f}".format(shop.profit)
