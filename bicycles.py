@@ -17,7 +17,7 @@ class BikeShop(object):
   
   def stock_bike(self, bike, count):
     self.inventory[bike] = count
-    self.price[bike] = ( bike.cost * 1 + self.margin )
+    self.price[bike] = bike.cost * ( 1 + self.margin )
     return self.inventory[bike], self.price[bike]
 
   def process_purchase(self, bike):
