@@ -1,18 +1,3 @@
-#
-#  Basic Requirements
-#
-#
-#
-#  Refactor your solution
-#  Once you have everything working, refactor your code to make it more modular. You should:
-#
-#  Create a file named bicycles.py that contains each of your classes.
-#  Create a file named main.py that imports those classes, and uses them.
-#  Run main.py and make sure your refactored code still works like it did before.
-#
-#  Good Luck
-#
-#  We're going to leave you largely on your own to complete this assignment, and we expect that your solution will not be optimal because you're just starting to work with object oriented programming and it takes time to develop an instinctive sense of what makes for good object oriented design. As we said before, think of your solution to this project mainly as a conversation starter for you and your mentor.
 #  ======================================================================================
 #Extra Challenge
 #
@@ -60,7 +45,7 @@
 #Makes the bike shops stock their inventory by purchasing bikes from manufacturers
 #
 # ====================================================================
-from bicycles import Bicycle, BikeShop, Customer
+from bicycles import Bicycle, BikeShop, Customer, Frame, Wheel
 from random import randint
 
 def list_inventory(shop):
@@ -73,13 +58,23 @@ if __name__ == '__main__':
   print 'Welcome to {}...\n'.format(my_shopname)
   shop = BikeShop(my_shopname,0.20)
   
+  # Define wheel types.
+  jabba = Wheel("Jabba",80,37)
+  brock = Wheel("Brock",55,47)
+  grady = Wheel("Grady",40,57)
+  
+  # Define frame models.
+  flyer = Frame("Flyer","carbon",15,50)
+  mondo = Frame("Mondo","steel",30,90)
+  reynolds = Frame("Reynolds","aluminum",20,75)
+  
   # Define bicycle models.
-  kopriva = Bicycle("Kopriva",5,99)
-  ems = Bicycle("Ems",4,249)
-  hambright = Bicycle("Hambright",50,799)
-  renzi = Bicycle("Renzi",10,119)
-  chief = Bicycle("Chief",8,549)
-  ram = Bicycle("Ram",7,339)
+  kopriva = Bicycle("Kopriva",flyer,brock)
+  ems = Bicycle("Ems",flyer,grady)
+  hambright = Bicycle("Hambright",mondo,jabba)
+  renzi = Bicycle("Renzi",reynolds,jabba)
+  chief = Bicycle("Chief",reynolds,brock)
+  ram = Bicycle("Ram",mondo,grady)
  
   # Stock the bicycle shop.
   # TO DO: Find a random integer generator and use those values instead.
