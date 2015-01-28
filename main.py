@@ -79,6 +79,8 @@
 #Creates two bicycle manufacturers, which both produce three different bicycle models
 #Makes the bike shops stock their inventory by purchasing bikes from manufacturers
 #
+# ====================================================================
+from random import randint
 
 class Bicycle(object):
   def __init__(self, model_name, weight, cost):
@@ -90,27 +92,103 @@ class BikeShop(object):
   def __init__(self, shop_name, margin):
     self.shop_name = shop_name # Have a name
     self.margin = margin # Sell bicycles with a margin over their cost
+    self.inventory = {}
+    self.price = {}
+    self.profit = 0
   
-  #Have an inventory of different bicycles
-  #Can see how much profit they have made from selling bikes
+  def stock_bike(self, bike, count):
+    self.inventory[bike] = count
+    self.price[bike] = ( bike.cost * 1 + shop.margin )
+  
+  def calculate_profit(self,cost):
+    self.profit += cost * self.margin
 
 class Customer(object):
   def __init__(self, name, fund):
     self.name = name # Have a name
     self.fund = fund # Have a fund of money to buy a bike
+    self.options = [] # which bikes are under budget and available
 
-  #Can buy and own a new bicycle
+  def purchase(self,model):
+    self.bike = model
+    self.fund -= ( bike.cost * 1 + shop.margin )
 
+def list_inventory(shop):
+  for bike in shop.inventory:
+    print "{}: {} (${:,.2f})".format(bike.model_name, shop.inventory[bike], shop.price[bike]) 
+    
 if __name__ == '__main__':
+  # Set up the bike shop.  Stock 6 models, and surcharge 20%.
   my_shopname = "LoPresti's Bike Shop"
-  print 'Welcome to {}...'.format(my_shopname)
+  print 'Welcome to {}...\n'.format(my_shopname)
   shop = BikeShop(my_shopname,0.20)
+  
+  # Define bicycle models.
+  kopriva = Bicycle("Kopriva",5,99)
+  ems = Bicycle("Ems",4,249)
+  hambright = Bicycle("Hambright",50,799)
+  renzi = Bicycle("Renzi",10,119)
+  chief = Bicycle("Chief",8,549)
+  ram = Bicycle("Ram",7,339)
+ 
+  # Stock the bicycle shop.
+  # TO DO: Find a random integer generator and use those values instead.
+  shop.stock_bike(kopriva, randint(0,3))
+  shop.stock_bike(ems, randint(0,3))
+  shop.stock_bike(hambright, randint(0,3))
+  shop.stock_bike(renzi, randint(0,3))
+  shop.stock_bike(chief, randint(0,3))
+  shop.stock_bike(ram, randint(0,3))
+  
+  # Define customers.
   david = Customer("David",200)
   doug = Customer("Doug",500)
   bryan = Customer("Bryan",1000)
-#  Create a bicycle shop that has 6 different bicycle models in stock. The shop should charge its customers 20% over the cost of the bikes.
-#  Create three customers. One customer has a budget of $200, the second $500, and the third $1000.
-#  Print the name of each customer, and a list of the bikes offered by the bike shop that they can afford given their budget. Make sure you price the bikes in such a way that each customer can afford at least one.
-#  Print the initial inventory of the bike shop for each bike it carries.
-#  Have each of the three customers purchase a bike then print the name of the bike the customer purchased, the cost, and how much money they have left over in their bicycle fund.
-#  After each customer has purchased their bike, the script should print out the bicycle shop's remaining inventory for each bike, and how much profit they have made selling the three bikes.
+
+  # Print the initial inventory of the bike shop for each bike it carries.
+  print "\nOur current inventory (Bicycle: Number Available ($Price)):\n"
+  list_inventory(shop)
+
+  # Print the name of each customer, and a list of the bikes offered by
+  # the bike shop that they can afford given their budget. Make sure you
+  # price the bikes in such a way that each customer can afford at least
+  # one.
+  print "\nToday's customers (and their budgets) are:"
+  for customer in [ david, doug, bryan ]:
+    print "\n{} (${}) can afford:".format(customer.name, customer.fund)
+    for bike in shop.inventory:
+      if ( shop.price[bike] <= customer.fund ) and ( shop.inventory[bike] > 0 ):
+        print "The {} (${:,.2f}) ({} available)".format(bike.model_name, 
+                                                   shop.price[bike],
+                                                   shop.inventory[bike]
+                                                  )
+        customer.options.append(bike)
+
+  # Have each of the three customers purchase a bike then print the name of the
+  # bike the customer purchased, the cost, and how much money they have left over
+  # in their bicycle fund.
+  print '\nLet\'s get these fine people some bikes!\n'
+  for customer in [ david, doug, bryan ]: 
+    if len(customer.options) > 0:
+      print "Customer {}, {} option{}...".format(customer.name, len(customer.options),
+                                                 "s" if len(customer.options) > 1 else "")
+      which = randint(0,1000) % len(customer.options)
+      buy_bike = customer.options[which]
+      customer.fund -= shop.price[buy_bike]
+      shop.calculate_profit(buy_bike.cost)
+      shop.inventory[buy_bike] -= 1
+      print "{} gets the {} for ${:,.2f}, and has ${:,.2f} left.\n".format(customer.name,
+                                                                         buy_bike.model_name,
+                                                                         shop.price[buy_bike],
+                                                                         customer.fund)
+    else:
+      print "No luck for Customer {} -- we're out of bikes in that price range.".format(customer.name)
+      print "Please come back soon, {}.  We get new stock every week.\n".format(customer.name)
+
+  # After each customer has purchased their bike, the script should print out the
+  # bicycle shop's remaining inventory for each bike, and how much profit they have
+  # made selling the three bikes.
+  print 'After a busy day of sales at {}...\n'.format(my_shopname)
+  print "Our end-of-day inventory (Bicycle: Number Available ($Price)):\n"
+  list_inventory(shop)
+  print "\nWe made a profit of ${:,.2f}".format(shop.profit)
